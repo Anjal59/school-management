@@ -1,0 +1,302 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Teacher Dashboard</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        /* Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            color: #333;
+        }
+
+        /* Navbar */
+        .navbar {
+            width: 100%;
+            height: 80px;
+            background-color: #0f3257;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+
+        .navbar h1 {
+            font-size: 20px;
+        }
+
+        .navbar button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            background-color: #dc3545;
+            cursor: pointer;
+            color: white;
+            font-weight: bold;
+        }
+
+        .navbar button:hover {
+            background-color: #c82333;
+        }
+
+        /* Layout */
+        .main {
+            display: flex;
+            min-height: calc(100vh - 60px);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background-color: #ffffff;
+            padding: 20px;
+            border-right: 1px solid #ddd;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .sidebar img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 15px;
+        }
+
+        .sidebar h2 {
+            margin-bottom: 20px;
+            font-size: 18px;
+            text-align: center;
+        }
+
+        .sidebar a {
+            width: 100%;
+            text-decoration: none;
+            color: #333;
+            padding: 10px 15px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            transition: 0.3s;
+            display: block;
+            text-align: center;
+            background-color: #f5f5f5;
+        }
+
+        .sidebar a:hover {
+            background-color: #172b41;
+            color: white;
+        }
+
+        /* Content */
+        .content {
+            flex: 1;
+            padding: 20px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .card h2 {
+            margin-bottom: 15px;
+            font-size: 18px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 5px;
+        }
+
+        .box {
+            background-color: #f9f9f9;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+
+        input, textarea, select, button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 8px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+        }
+
+        button {
+            background-color: #14293f;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+            border: none;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        @media(max-width: 768px) {
+            .main {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                flex-direction: row;
+                overflow-x: auto;
+                padding: 10px;
+            }
+
+            .sidebar img {
+                margin-right: 15px;
+            }
+
+            .sidebar h2 {
+                display: none;
+            }
+
+            .sidebar a {
+                margin: 0 5px;
+                flex: 1 0 auto;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <div class="navbar">
+        <h1>Teachers Portal</h1>
+        <form action="{% url 'logout' %}" method="POST">
+            {% csrf_token %}
+            <button type="submit">Logout</button>
+        </form>
+    </div>
+
+    <!-- Main Layout -->
+    <div class="main">
+
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <img src="https://thumbs.dreamstime.com/b/cartoon-female-teacher-blue-suit-holding-book-pointer-emerging-colorful-heart-shaped-background-female-teacher-434265980.jpg" alt="Teacher Photo">
+            <h2>{{ user.username }}</h2>
+            <a href="#students">Students</a>
+            <a href="#tasks">Create Task</a>
+            <a href="#attendance">Attendance</a>
+            <a href="#notifications">Notifications</a>
+            <a href="#submissions">Submissions</a>
+        </div>
+
+        <!-- Content -->
+        <div class="content">
+
+            <!-- Students -->
+            <div class="card" id="students">
+                <h2>Registered Students</h2>
+                {% for student in students %}
+                    <div class="box">
+                        <strong>{{ student.username }}</strong> - {{ student.email }}
+                    </div>
+                {% empty %}
+                    <p>No students found</p>
+                {% endfor %}
+            </div><br>
+
+            <!-- Create Task -->
+            <div class="card" id="tasks">
+                <h2>Create Task</h2>
+                <form method="POST">
+                    {% csrf_token %}
+                    <label>Task Title</label>
+                    <input type="text" name="title" placeholder="Enter task title">
+
+                    <label>Description</label>
+                    <textarea name="description" placeholder="Enter task description"></textarea>
+
+                    <label>Select Student</label>
+                    <select name="student">
+                        {% for student in students %}
+                            <option value="{{ student.id }}">{{ student.username }}</option>
+                        {% endfor %}
+                    </select>
+
+                    <label>Due Date</label>
+                    <input type="date" name="due_date">
+
+                    <button type="submit" name="create_task_submit">Create Task</button>
+                </form>
+            </div><br>
+
+            <!-- Grid for Attendance & Notification -->
+            <div class="grid">
+
+                <!-- Attendance Records -->
+                <div class="card" id="attendance">
+                    <h2>Student Attendance Records</h2>
+                    {% for record in attendance_records %}
+                        <div class="box">
+                            <strong>Student:</strong> {{ record.student.username }} <br>
+                            <strong>Date:</strong> {{ record.date }} <br>
+                            <strong>Status:</strong> {{ record.status }}
+                        </div>
+                    {% empty %}
+                        <p>No attendance marked yet</p>
+                    {% endfor %}
+                </div><br>
+
+                <!-- Notifications -->
+                <div class="card" id="notifications">
+                    <h2>Send Notification</h2>
+                    <form method="POST">
+                        {% csrf_token %}
+                        <label>Message</label>
+                        <textarea name="notification_message" placeholder="Enter message here..."></textarea>
+                        <button type="submit" name="notification_submit">Send Notification</button>
+                    </form>
+                </div>
+
+            </div><br>
+
+            <!-- Task Submissions -->
+            <div class="card" id="submissions">
+                <h2>Student Task Submissions</h2>
+                {% for sub in submissions %}
+                    <div class="box">
+                        <strong>Student:</strong> {{ sub.student.username }} <br>
+                        <strong>Task:</strong> {{ sub.task.title }} <br>
+                        <strong>Answer:</strong> {{ sub.submission_text }} <br>
+                        <strong>Date:</strong> {{ sub.submitted_at }}
+                    </div>
+                {% empty %}
+                    <p>No submissions yet</p>
+                {% endfor %}
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+</html>

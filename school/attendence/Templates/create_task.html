@@ -1,0 +1,19 @@
+<h2>Create Task</h2>
+
+<form method="POST">
+    {% csrf_token %}
+
+    <input type="text" name="title" placeholder="Task Title"><br><br>
+
+    <textarea name="description" placeholder="Task Description"></textarea><br><br>
+
+    <select name="student">
+        {% for student in students %}
+            <option value="{{ student.id }}">{{ student.username }}</option>
+        {% endfor %}
+    </select><br><br>
+
+    <input type="date" name="due_date"><br><br>
+
+    <button type="submit">Create Task</button>
+</form>

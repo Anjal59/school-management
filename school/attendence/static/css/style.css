@@ -1,0 +1,21 @@
+/* General Button Style */
+button {
+    padding: 8px 15px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    opacity: 0.9;
+}
+
+/* Logout Button Style */
+.logout-btn {
+    background-color: #f00a0a;
+    padding: 5px 12px;
+    font-size: 13px;
+    width: auto;
+}
